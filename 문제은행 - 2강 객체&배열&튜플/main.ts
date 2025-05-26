@@ -51,6 +51,9 @@ function updateUser(user: { name: string; age?: number }): {
 } {
   const { name, age = 18 } = user;
   return { name, age };
+
+  // 정답지의 정답
+  //   return { ...user, age: user.age ?? 18 };
 }
 
 // 테스트 코드
@@ -69,9 +72,19 @@ const products2: products2Type = [
 
 //매개변수, 리턴 타입 정의 필요
 function getProductsByCategory(category: string): string[] {
+  // 배열 2번 순회함
   return products2
     .filter((info) => info.category === category)
     .map((info) => info.name);
+
+  // 정답지의 정답
+  // 배열 1번만 순회함
+  // return products.reduce((result: string[], product) => {
+  // if (product.category === category) {
+  //     result.push(product.name);
+  //   }
+  //   return result;
+  // }, []);
 }
 
 // 테스트 코드
