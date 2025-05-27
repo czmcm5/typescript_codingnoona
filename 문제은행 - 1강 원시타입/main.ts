@@ -27,14 +27,19 @@ console.log(addNumbers(5, 3));
 
 // ------------
 // 문제 4. 주어진 값을 받아 문자열로 변환하는 함수를 작성하세요. 값이 null 또는 undefined라면 "값이 없습니다"를 반환합니다
-function stringifyValue<T>(value: T): string {
-  if (value == null) return "값이 없습니다.";
-  return String(value);
+// 피드백 - stringifyValue에 제네릭 타입이 불필요 합니다.
+// function stringifyValue<T>(value: T): string {
+//   if (value == null) return "값이 없습니다.";
+//   return String(value);
+// }
+
+// 명예의 전당 - 값을 받아  보여주는  함수를  더 효율적인 방식
+function stringifyValue_another(value: unknown): string {
+  return (value ?? "값이 없습니다").toString();
 }
 
-// 정답지의 정답
-function stringifyValue_answer(value: string | null | undefined): string {
-  if (value === null || value === undefined) return "값이 없습니다";
+function stringifyValue(value: string | null | undefined): string {
+  if (value == null) return "값이 없습니다";
   return value;
 }
 
@@ -63,7 +68,6 @@ console.log(compareValues(42, 42)); // 엄격한 동등성
 // ------------
 // 문제 6. 주어진 값이 원시 타입인지 아닌지 확인하는 함수를 작성하세요.
 function isPrimitive(value: unknown): boolean {
-  // 정답지의 정답
   return value === null || value !== Object(value);
 }
 
