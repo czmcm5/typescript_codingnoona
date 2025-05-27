@@ -62,19 +62,21 @@ enum TaskStatus_ {
 }
 
 function processTask(status: TaskStatus_, input: unknown): string {
-  if (typeof input === "string") {
-    switch (status) {
-      case TaskStatus_.Pending:
-        return input.toUpperCase();
-      case TaskStatus_.InProgress:
-        return input.toLowerCase();
-      case TaskStatus_.Completed:
-        return `완료: ${input}`;
-      default:
-        return "에러: 작업이 실패했습니다.";
-    }
+  if (typeof input !== "string")
+    throw new Error("입력값은 문자열이어야 합니다.");
+
+  switch (status) {
+    case TaskStatus_.Pending:
+      return input.toUpperCase();
+    case TaskStatus_.InProgress:
+      return input.toLowerCase();
+    case TaskStatus_.Completed:
+      return `완료: ${input}`;
+    case TaskStatus_.Failed:
+      throw new Error("작업이 실패했습니다.");
+    default:
+      throw new Error("error");
   }
-  return "에러: 입력값은 문자열이어야 합니다.";
 }
 
 console.log(processTask(TaskStatus_.Pending, "task1")); // 기대 출력: "TASK1"
@@ -101,14 +103,21 @@ console.log(processTask(TaskStatus_.Pending, 42)); // 에러: 입력값은 문�
  - Debug: 메시지 앞에 [DEBUG] 출력
 */
 enum LogLevel {
-  Info = "INFO",
-  Error = "ERROR",
-  Debug = "DEBUG",
+  Info = "Info",
+  Error = "Error",
+  Debug = "Debug",
 }
 type LogMessageType = (message: string, level: LogLevel) => void;
 
 const logMessage: LogMessageType = (message: string, level: LogLevel) => {
-  console.log(`[${level}] ${message}`);
+  const levelUpper =
+    level === LogLevel.Info
+      ? "[INFO]"
+      : level === LogLevel.Error
+      ? "[ERROR]"
+      : "[DEBUG]";
+
+  console.log(`${levelUpper} ${message}`);
 };
 
 logMessage("시스템이 시작되었습니다.", LogLevel.Info);
@@ -133,7 +142,7 @@ function processUnknown(input: unknown): string | number {
     case "number":
       return input * 10;
     default:
-      return "error";
+      throw new Error("지원되지 않는 타입입니다.");
   }
 }
 
@@ -143,4 +152,8 @@ console.log(processAny(true)); // 기대 출력: "true"
 
 console.log(processUnknown("hello")); // 기대 출력: "HELLO"
 console.log(processUnknown(42)); // 기대 출력: 420
-console.log(processUnknown(true)); // 에러 발생
+try {
+  console.log(processUnknown(true)); // 에러 발생
+} catch (err) {
+  console.error(err.message); // "지원되지 않는 타입입니다."
+}
