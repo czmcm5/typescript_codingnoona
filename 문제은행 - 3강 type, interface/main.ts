@@ -18,15 +18,15 @@ id: 숫자
 name: 문자열
 address: 객체 ({city: 문자열,zipCode: 숫자})
 */
-interface Addr_ {
+type Addr_ = {
   city: string;
   zipCode: number;
-}
-interface User_ {
+};
+type User_ = {
   id: number;
   name: string;
   address: Addr_;
-}
+};
 const user_: User_ = {
   id: 1,
   name: "Alice",
@@ -76,11 +76,7 @@ type Product = {
   name: string;
   price: number;
 };
-type DiscountedProduct = {
-  id: number;
-  name: string;
-  price: number;
-} & { discount: number };
+type DiscountedProduct = Product & { discount: number };
 
 const normalProduct: Product = {
   id: 1,
@@ -142,12 +138,12 @@ interface BaseUser {
   id: number;
   name: string;
 }
-interface AdminUser extends BaseUser {
+type AdminUser = BaseUser & {
   role: string;
-}
-interface GuestUser extends BaseUser {
+};
+type GuestUser = BaseUser & {
   visitCount: number;
-}
+};
 
 const admin: AdminUser = {
   id: 1,
