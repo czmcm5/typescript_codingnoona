@@ -24,7 +24,7 @@ function processInput(input: InputData): number | string {
   }
   if ("message" in input) return upperString(input);
 
-  return "에러 발생";
+  throw new Error("유효하지 않은 타입");
 }
 
 console.log(processInput([1, 2, 3])); // 6
@@ -53,10 +53,20 @@ function processVehicle(vehicle: Car | Bike): string {
   if ("brand" in vehicle) return vehicle.brand.toUpperCase();
   if ("type" in vehicle) return `Bike: ${vehicle.type}`;
 
-  return "에러 발생";
+  throw new Error("유효하지 않은 타입");
 }
 
-// 테스트 코드
+// 정답지의 정답
+function processVehicle_answer(vehicle: Car | Bike): string {
+  if (vehicle instanceof Car) {
+    return vehicle.brand.toUpperCase();
+  } else if (vehicle instanceof Bike) {
+    return `Bike: ${vehicle.type}`;
+  } else {
+    throw new Error("유효하지 않은 Vehicle 타입입니다.");
+  }
+}
+
 const myCar = new Car("Tesla");
 const myBike = new Bike("Mountain");
 
@@ -81,7 +91,17 @@ function processUser(user: Admin | User): string {
   if (user.type === "admin") return user.permissions.join(",");
   if (user.type === "user") return user.email;
 
-  return "에러 발생";
+  throw new Error("유효하지 않은 타입");
+}
+
+// 정답지의 정답
+function processUser_answer(user: Admin | User): string {
+  if ("permissions" in user) {
+    return user.permissions.join(",");
+  } else if ("email" in user) {
+    return user.email;
+  }
+  throw new Error("유효하지 않은 타입");
 }
 
 console.log(processUser({ type: "admin", permissions: ["read", "write"] })); // "read,write"
@@ -107,13 +127,19 @@ function isRectangle(shape: unknown): shape is Rectangle {
     "width" in shape &&
     "height" in shape
   );
+
+  // 정답지의 정답
+  //   return (
+  //     (shape as Rectangle).width !== undefined &&
+  //     (shape as Rectangle).height !== undefined
+  //   );
 }
 
 function calculateArea(shape: Rectangle | Circle): number {
   if (isRectangle(shape)) return shape.width * shape.height;
-  if ("radius" in shape) return Math.PI * Math.pow(shape.radius, 2);
+  if ("radius" in shape) return Math.PI * shape.radius ** 2;
 
-  return 0;
+  throw new Error("유효하지 않은 타입");
 }
 
 console.log(calculateArea({ width: 10, height: 5 })); // 50
@@ -145,12 +171,13 @@ type Shape_ =
 function calculateArea_(shape: Shape): number {
   const reShape = returnType(shape);
 
-  if (reShape.type === "square") return Math.pow(reShape.side, 2);
-  if (reShape.type === "circle") return Math.PI * Math.pow(reShape.radius, 2);
+  if (reShape.type === "square") return reShape.side ** 2;
+  if (reShape.type === "circle") return Math.PI * reShape.radius ** 2;
 
-  return 0;
+  throw new Error("유효하지 않은 타입");
 }
 
+// 테스트 코드의 인수값을 수정하지 않도록 할 수 잇게
 function returnType(shape: Shape): Shape_ {
   if ("side" in shape && "radius" in shape) {
     throw new Error("에러 발생");
@@ -173,3 +200,25 @@ function exhaustiveCheck(params: never): never {
 
 console.log(calculateArea_({ side: 5 })); // 기대 출력: 25
 console.log(calculateArea_({ radius: 7 })); // 기대 출력: 153.93804002589985
+
+// ----- 정답지의 정답
+type Square__ = { type: "square"; side: number };
+type Circle__ = { type: "circle"; radius: number };
+
+type Shape__ = Square__ | Circle__;
+
+function calculateArea_answer(shape: Shape__): number {
+  switch (shape.type) {
+    case "square":
+      return shape.side ** 2;
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+    default:
+      // Exhaustiveness check
+      const _exhaustive: never = shape;
+      throw new Error(`Unhandled shape type: ${_exhaustive}`);
+  }
+}
+
+console.log(calculateArea_answer({ type: "square", side: 5 }));
+console.log(calculateArea_answer({ type: "circle", radius: 7 }));
