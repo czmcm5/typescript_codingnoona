@@ -159,22 +159,20 @@ console.log(calculateArea({ radius: 7 })); // 153.93804002589985 (대략 π * 7�
 
 type Shape = { side: number } | { radius: number };
 type Shape_ =
-  | {
-      type: "square";
-      side: number;
-    }
-  | {
-      type: "circle";
-      radius: number;
-    };
+  | { type: "square"; side: number }
+  | { type: "circle"; radius: number };
 
 function calculateArea_(shape: Shape): number {
   const reShape = returnType(shape);
 
-  if (reShape.type === "square") return reShape.side ** 2;
-  if (reShape.type === "circle") return Math.PI * reShape.radius ** 2;
+  switch (reShape.type) {
+    case "square":
+      return reShape.side ** 2;
+    case "circle":
+      return Math.PI * reShape.radius ** 2;
+  }
 
-  throw new Error("유효하지 않은 타입");
+  exhaustiveCheck(reShape);
 }
 
 // 테스트 코드의 인수값을 수정하지 않도록 할 수 잇게
@@ -182,16 +180,10 @@ function returnType(shape: Shape): Shape_ {
   if ("side" in shape && "radius" in shape) {
     throw new Error("에러 발생");
   }
+  if ("side" in shape) return { type: "square", side: shape.side };
+  if ("radius" in shape) return { type: "circle", radius: shape.radius };
 
-  if ("side" in shape) {
-    return { ...shape, type: "square" };
-  }
-
-  if ("radius" in shape) {
-    return { ...shape, type: "circle" };
-  }
-
-  return exhaustiveCheck(shape);
+  exhaustiveCheck(shape);
 }
 
 function exhaustiveCheck(params: never): never {
