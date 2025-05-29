@@ -4,7 +4,7 @@
 2.입력: 제네릭 배열
 3.출력: 배열의 첫 번째 요소
 */
-function getFirstElement<T>(array: T[]): T {
+function getFirstElement<T>(array: T[]): T | undefined {
   return array[0];
 }
 
@@ -21,10 +21,7 @@ console.log(getFirstElement([])); // undefined
  - 그렇지 않으면 false.
 */
 function isNumberArray<T>(array: T[]): boolean {
-  if (array.length === 0 || array.every((el) => typeof el === "number"))
-    return true;
-
-  return false;
+  return array.every((el) => typeof el === "number");
 }
 
 console.log(isNumberArray([1, 2, 3])); // true
