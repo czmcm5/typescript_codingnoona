@@ -19,8 +19,10 @@ function upperString(obj: { message: string }): string {
 
 function processInput(input: InputData): number | string {
   if (Array.isArray(input)) {
-    if (typeof input[0] === "number") return sumArray(input as number[]);
-    if (typeof input[0] === "string") return joinString(input as string[]);
+    if (input.length === 0) return 0;
+    if (input.every((el) => typeof el === "number")) return sumArray(input);
+    if (input.every((el) => typeof el === "string"))
+      return joinString(input as string[]);
   }
   if ("message" in input) return upperString(input);
 
@@ -30,7 +32,7 @@ function processInput(input: InputData): number | string {
 console.log(processInput([1, 2, 3])); // 6
 console.log(processInput(["hello", "world"])); // "helloworld"
 console.log(processInput({ message: "TypeScript" })); // "TYPESCRIPT"
-// console.log(processInput(42)); // 에러 발생
+console.log(processInput(42 as any)); // 에러 발생
 
 /*
 문제 2. 다음 조건을 만족하는 코드를 작성하세요.
@@ -157,49 +159,13 @@ console.log(calculateArea({ radius: 7 })); // 153.93804002589985 (대략 π * 7�
  - exhaustiveness check를 추가하여, 새로운 타입이 추가되더라도 타입 안정성을 유지하도록 구현하세요.
 */
 
-type Shape = { side: number } | { radius: number };
-type Shape_ =
-  | { type: "square"; side: number }
-  | { type: "circle"; radius: number };
-
-function calculateArea_(shape: Shape): number {
-  const reShape = returnType(shape);
-
-  switch (reShape.type) {
-    case "square":
-      return reShape.side ** 2;
-    case "circle":
-      return Math.PI * reShape.radius ** 2;
-  }
-
-  exhaustiveCheck(reShape);
-}
-
-// 테스트 코드의 인수값을 수정하지 않도록 할 수 잇게
-function returnType(shape: Shape): Shape_ {
-  if ("side" in shape && "radius" in shape) {
-    throw new Error("에러 발생");
-  }
-  if ("side" in shape) return { type: "square", side: shape.side };
-  if ("radius" in shape) return { type: "circle", radius: shape.radius };
-
-  exhaustiveCheck(shape);
-}
-
-function exhaustiveCheck(params: never): never {
-  throw new Error("에러 발생");
-}
-
-console.log(calculateArea_({ side: 5 })); // 기대 출력: 25
-console.log(calculateArea_({ radius: 7 })); // 기대 출력: 153.93804002589985
-
 // ----- 정답지의 정답
-type Square__ = { type: "square"; side: number };
-type Circle__ = { type: "circle"; radius: number };
+type Square_ = { type: "square"; side: number };
+type Circle_ = { type: "circle"; radius: number };
 
-type Shape__ = Square__ | Circle__;
+type Shape_ = Square_ | Circle_;
 
-function calculateArea_answer(shape: Shape__): number {
+function calculateArea_answer(shape: Shape_): number {
   switch (shape.type) {
     case "square":
       return shape.side ** 2;
