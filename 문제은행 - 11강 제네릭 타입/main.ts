@@ -42,10 +42,14 @@ console.log(isNumberArray([])); // true (빈 배열은 숫자 배열로 간주)
 */
 type IsArray<T> = T extends any[] ? true : false;
 
-function checkArrayType(value: unknown): string {
-  if (Array.isArray(value)) return "This is an array.";
+// 타입 추론 단계에서 검사
+function isArrayType<T>(value: T): IsArray<T> {
+  return Array.isArray(value) as IsArray<T>;
+}
 
-  return "This is not an array.";
+// 런타임 환경에서 타입 검사
+function checkArrayType(value: unknown): string {
+  return isArrayType(value) ? "This is an array." : "This is not an array.";
 }
 
 console.log(checkArrayType([1, 2, 3])); // "This is an array."
