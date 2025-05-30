@@ -25,6 +25,10 @@ function calculateShippingCost(
   region: RegionCode,
   costs: Record<RegionCode, number>
 ): number {
+  if (!(region in costs)) {
+    throw new Error(`Unsupported region code: ${region}`);
+  }
+
   return costs[region];
 }
 
@@ -32,7 +36,11 @@ console.log(calculateShippingCost("US", shippingCosts)); // 10
 console.log(calculateShippingCost("EU", shippingCosts)); // 15
 console.log(calculateShippingCost("ASIA", shippingCosts)); // 20
 console.log(calculateShippingCost("AFRICA", shippingCosts)); // 25
-// console.log(calculateShippingCost("AUSTRALIA", shippingCosts)); // 에러 발생
+try {
+  console.log(calculateShippingCost("AUSTRALIA" as RegionCode, shippingCosts)); // 에러 발생
+} catch (error) {
+  console.error(error); // "Unsupported region code: AUSTRALIA"
+}
 
 /*
 2. 학생들의 점수를 기록하고 평균 점수를 계산하는 문제입니다.
