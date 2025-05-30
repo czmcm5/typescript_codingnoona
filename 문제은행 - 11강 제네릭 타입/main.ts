@@ -95,7 +95,9 @@ const testData: WithDefaults = {
 출력:
  - { key: value } 형태의 객체
 */
-function createObject<K extends string | number | symbol, V>(
+
+// PropertyKey = string | number | symbol
+function createObject<K extends PropertyKey, V>(
   key: K,
   value: V
 ): { [P in K]: V } {
