@@ -63,6 +63,7 @@ function processRequest<T extends "text" | "json" | "binary">(
   data: RequestData<T>
 ): string {
   if (type === "json") return `Processed: ${JSON.stringify(data)}`;
+  if (type === "binary") return `Processed: ${(data as Uint8Array).join(",")}`; // Uint8Array: 8비트 정수 배열
   return `Processed ${data}`;
 }
 
